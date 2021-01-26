@@ -10,6 +10,25 @@ document.addEventListener('DOMContentLoaded', function() {
     send_email();
     return false;
   }
+  // emails = document.querySelectorAll(".card-title");
+  // emails.forEach((email) => {
+  //   email.addEventListener('click', function() {
+  //     console.log('all good here');
+  //   })
+  // });
+  //   email.onclick = () => {
+
+  //     // document.getElementById("email-view").innerHTML = `${email.dataset.id}`;
+  //     document.getElementById("email-view").innerHTML = "Something has been clicked";
+  //   }
+  // });
+
+  // emails.forEach(addEventListener('click', function(event) {
+  //   console.log(event);
+  // });
+  // document.querySelectorAll(".card-title").forEach(function(card) {
+  //   console.log(`${card.dataset.id}`)
+  // });
   // document.querySelector(".card-title").onclick = function() {
   //   console.log('clicked button');
 
@@ -36,6 +55,7 @@ function compose_email() {
 
   // Show compose view and hide other views
   document.querySelector('#emails-view').style.display = 'none';
+  document.querySelector('#email-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'block';
 
   // Clear out composition fields
@@ -49,6 +69,7 @@ function load_mailbox(mailbox) {
   
   // Show the mailbox and hide other views
   document.querySelector('#emails-view').style.display = 'block';
+  document.querySelector('#email-view').style.display = 'none';
   document.querySelector('#compose-view').style.display = 'none';
 
   // Show the mailbox name
@@ -78,6 +99,61 @@ function display_emails(email) {
     emailElem.classList.remove('unread');
   }
   const display = document.getElementById('emails-view').append(emailElem);
+
+  emailElem.addEventListener('click', function() {
+    console.log(`First attempt ${this.dataset.id}`);
+    load_email(this);
+
+  })
+}
+
+function load_email(email) {
+    // Show the email view and hide other views
+    document.querySelector('#email-view').style.display = 'block';
+    document.querySelector('#emails-view').style.display = 'none';
+    document.querySelector('#compose-view').style.display = 'none';
+
+    //Clear the email view div so that the individual emails don't tack on on top of each other every time I click on the individual emails. 
+    document.querySelector('#email-view').innerHTML = '';
+    
+    console.log(`Second attempt ${email.dataset.id}`)
+
+    //Make the fetch api call for the GET request 
+    url = url = `/emails/${email.dataset.id}`
+    fetch(url, {
+      method:"GET",
+    })
+    .then(function(response) {
+      return response.json();
+    })
+    .then(function(data) {
+      console.log(data);
+      const emailElem = document.createElement('article');
+      emailElem.classList.add('card-title');
+      emailElem.innerHTML = 'sender '+ data.sender + ' subject ' + data.subject + ' timestamp ' + data.timestamp;
+      emailElem.dataset.id = `${data.id}`;
+      const display = document.getElementById('email-view').append(emailElem);
+    })
+
+    //Make the fetch api call for the PUT request
+    url = url = url = `/emails/${email.dataset.id}`
+    fetch(url, {
+      method: 'PUT',
+      body: JSON.stringify({
+        read: true
+      })
+    })
+    // .then(function(response) {
+    //   return response.json();
+    // })
+    .then(function(data) {
+      console.log(data);
+    })
+
+
+
+    
+
 }
 
 //   .then(function(response) {
@@ -147,3 +223,16 @@ function send_email() {
 
   // .catch(error => console.log(error));
 }
+
+
+// function display_email()
+
+// function myfunction(item) {
+//   item.addEventListener('click', () => {
+//     console.log('the item was clicked');
+//   })
+// }
+
+// function myfunction(email) {
+//   document.getElementById("email-view").innerHTML = `${email}`;
+// }
