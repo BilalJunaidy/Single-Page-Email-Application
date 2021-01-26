@@ -10,6 +10,11 @@ document.addEventListener('DOMContentLoaded', function() {
     send_email();
     return false;
   }
+  // document.querySelector(".card-title").onclick = function() {
+  //   console.log('clicked button');
+
+  //   // console.log(`The id is -- ${this.data.id}`);
+  // }
 
 
   // 2. Add a new Event listener here for when the form with id "compose-form" has been submitted. 
@@ -48,7 +53,40 @@ function load_mailbox(mailbox) {
 
   // Show the mailbox name
   document.querySelector('#emails-view').innerHTML = `<h3>${mailbox.charAt(0).toUpperCase() + mailbox.slice(1)}</h3>`;
+
+  //The following code handles the fetch request
+  url = `/emails/${mailbox}`
+  fetch(url, {
+    method: 'GET',
+  })
+  .then(response => response.json())
+  .then(function(data) {
+    data.forEach(display_emails);
+  })
 }
+
+function display_emails(email) {
+
+  const emailElem = document.createElement('article');
+  emailElem.classList.add('card-title');
+  emailElem.innerHTML = 'sender '+ email.sender + ' subject ' + email.subject + ' timestamp ' + email.timestamp;
+  emailElem.dataset.id = `${email.id}`;
+  if(email.read != false) {
+    emailElem.classList.add('unread');
+  }
+  else {
+    emailElem.classList.remove('unread');
+  }
+  const display = document.getElementById('emails-view').append(emailElem);
+}
+
+//   .then(function(response) {
+//     return response.json();
+//   })
+//   .then(function(data) {
+//     console.log(data);
+//   })
+// }
 
 // function handleErrors(response) {
 //   if (!response.ok) {
